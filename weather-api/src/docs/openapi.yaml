@@ -1,0 +1,181 @@
+openapi: 3.0.3
+info:
+  title: Widgets API
+  version: 1.0.0
+  description: REST API for managing weather widgets.
+servers:
+  - url: http://localhost:5000
+    description: Local
+
+tags:
+  - name: Widgets
+    description: Endpoints to manage weather widgets
+  - name: Health
+    description: Service health endpoint
+
+paths:
+  /widgets:
+    get:
+      tags:
+        - Widgets
+      summary: Get all widgets
+      responses:
+        "200":
+          description: List of widgets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Widget"
+    post:
+      tags:
+        - Widgets
+      summary: Add a new widget
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Location"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Widget"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /widgets/{id}:
+    delete:
+      tags:
+        - Widgets
+      summary: Remove a widget by ID
+      parameters:
+        - $ref: "#/components/parameters/WidgetId"
+      responses:
+        "200":
+          description: Deleted
+        "404":
+          description: Not found
+
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      responses:
+        "200":
+          description: Service status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  service:
+                    type: string
+                    example: Running
+
+components:
+  parameters:
+    WidgetId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: MongoDB ObjectId of the widget
+  schemas:
+    Location:
+      type: object
+      required:
+        - city
+        - state
+        - country
+        - latitude
+        - longitude
+      properties:
+        city:
+          type: string
+          example: Stuttgart,
+        state:
+          type: string
+          example: Baden-Wurttemberg
+        country:
+          type: string
+          example: Germany
+        latitude:
+          type: number
+          example: 48.78232
+        longitude:
+          type: number
+          example: 9.17702
+    WeatherForecast:
+      type: object
+      properties:
+        maximum:
+          type: object
+          additionalProperties:
+            type: number
+          description: Daily max temp keyed by date in YYYY-MM-DD
+          example:
+            "2025-08-26": 30
+            "2025-08-27": 28
+        minimum:
+          type: object
+          additionalProperties:
+            type: number
+          description: Daily min temp keyed by date in YYYY-MM-DD
+          example:
+            "2025-08-26": 18
+            "2025-08-27": 17
+    Weather:
+      type: object
+      required:
+        - currentTemperature
+        - unit
+        - isDay
+        - forecast
+      properties:
+        currentTemperature:
+          type: number
+          example: 18
+        unit:
+          type: string
+          example: "°C"
+        isDay:
+          type: boolean
+          example: true
+        forecast:
+          $ref: "#/components/schemas/WeatherForecast"
+    Widget:
+      type: object
+      required: [id, location, weather]
+      properties:
+        id:
+          type: string
+          example: "64faabc123def4567890abcd"
+        location:
+          $ref: "#/components/schemas/Location"
+        weather:
+          $ref: "#/components/schemas/Weather"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Validation failed"
+        code:
+          type: string
+          example: "BAD_REQUEST"
