@@ -61,8 +61,29 @@ paths:
       responses:
         "200":
           description: Deleted
-        "404":
-          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Widget deleted successfully
+              example:
+                message: "Widget deleted successfully"
+
+        "400":
+          description: Invalid widget id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid widget id
+              example:
+                error: "Invalid widget id"
 
   /health:
     get:
