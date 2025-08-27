@@ -125,6 +125,7 @@ cd Tecomon-Aufgabe
 cd weather-api
 cat > .env            # Configure your env variables
 npm install
+npm run build		  # Compiles TypeScript into JavaScript
 npm run start         # Start the server
 ```
 
@@ -149,6 +150,7 @@ npm run start         # Start the server
 cd ../weather-app
 cat > .env            # Configure your env variables
 npm install
+npm run build		  # Build the Next.js app for production
 npm run start         # Start the server
 ```
 
